@@ -25,13 +25,16 @@ const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Reports = lazy(() => import("./pages/Reports"));
 const Settings = lazy(() => import("./pages/Settings"));
 const Notifications = lazy(() => import("./pages/Notifications"));
+const PersonalApp = lazy(() => import("./personal/PersonalApp"));
 
 export default function App() {
   return <>
     <Toaster position="top-right" toastOptions={{ duration: 2800, style: { borderRadius: "12px", fontSize: "13px" } }} />
     <Routes>
+      <Route path="/personal/*" element={<Suspense fallback={<div className="page-loading">Loading personal accounts…</div>}><PersonalApp /></Suspense>} />
       <Route element={<Layout />}>
-        <Route index element={<Suspense fallback={<div className="page-loading">Loading your workspace…</div>}><Dashboard /></Suspense>} />
+        <Route index element={<WorkDashboard />} />
+        <Route path="overview" element={<Suspense fallback={<div className="page-loading">Loading your workspace…</div>}><Dashboard /></Suspense>} />
         <Route path="work" element={<WorkDashboard />} />
         <Route path="companies" element={<Companies />} />
         <Route path="work-employees" element={<WorkEmployees />} />

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Building2, Pencil, Plus, Power, RotateCcw, Trash2 } from "lucide-react";
+import { Archive, Building2, Pencil, Plus, Power, RotateCcw, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useStore } from "../../context/StoreContext";
@@ -17,13 +17,14 @@ const fields = [
   { name: "workType", label: "Work type", type: "select", options: ["Office", "Hybrid", "Remote", "Field work"] },
   { name: "salaryType", label: "Default salary type", type: "select", options: ["Monthly", "Daily", "Hourly"] },
   { name: "monthlySalary", label: "Default monthly salary (₹)", type: "number", min: 0 },
+  { name: "overtimeRate", label: "Custom overtime rate (₹ per hour, optional)", type: "number", min: 0, allowEmpty: true },
   { name: "paymentDay", label: "Usual payment day of month", type: "number", min: 1, max: 31 },
   { name: "salaryCalculationMethod", label: "Monthly salary calculation", type: "select", options: [{ value: "calendar-days", label: "Calendar days in month" }, { value: "working-days", label: "Configured working days" }] },
   { name: "notes", label: "Notes", type: "textarea", wide: true },
 ];
 
 export default function Companies() {
-  const { data, add, update, setWorkPreferences } = useStore();
+  const { data, add, update, setWorkPreferences, deleteWorkCompany } = useStore();
   const navigate = useNavigate();
   const [modal, setModal] = useState(null);
   const [companyView, setCompanyView] = useState("all");
@@ -48,6 +49,19 @@ export default function Companies() {
     update("workCompanies", company.id, { active: false, archived: true, leaveDate: company.leaveDate || dateKey() });
     toast.success(`${company.name} archived. Historical records are preserved.`);
   };
+  const deleteCompany = (company) => {
+    const employeeCount = data.workEmployees.filter((employee) => employee.companyId === company.id).length;
+    const attendanceCount = data.workAttendance.filter((record) => record.companyId === company.id || data.workEmployees.some((employee) => employee.id === record.employmentId && employee.companyId === company.id)).length;
+    const salaryCount = data.workSalaryTransactions.filter((record) => record.companyId === company.id || data.workEmployees.some((employee) => employee.id === record.employmentId && employee.companyId === company.id)).length;
+    const details = [
+      `${employeeCount} employment record${employeeCount === 1 ? "" : "s"}`,
+      `${attendanceCount} attendance record${attendanceCount === 1 ? "" : "s"}`,
+      `${salaryCount} salary transaction${salaryCount === 1 ? "" : "s"}`,
+    ].join(", ");
+    if (!window.confirm(`Permanently delete ${company.name} and all its linked data (${details})? This cannot be undone. Choose Archive instead to preserve its history.`)) return;
+    deleteWorkCompany(company.id);
+    toast.success(`${company.name} and its linked records were permanently deleted.`);
+  };
   const save = (values) => {
     if (modal?.id) {
       const active = values.leaveDate ? false : modal.active;
@@ -69,7 +83,7 @@ export default function Companies() {
       const activeEmployees = employees.filter((employee) => employee.status === "Active").length;
       const totalMonthly = employees.filter((employee) => employee.status === "Active").reduce((sum, employee) => sum + monthlySalaryEquivalent(employee), 0);
       return <article key={company.id} className={`company-directory-card company-directory-clickable ${!company.active ? "company-inactive" : ""}`} role="link" tabIndex={0} aria-label={`Open ${company.name} payroll`} onClick={() => navigate(`/company-salary?company=${company.id}`)} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); navigate(`/company-salary?company=${company.id}`); } }}>
-        <div className="company-directory-top"><span className="company-logo-large">{company.logo ? <img src={company.logo} alt="" /> : <Building2 size={22} />}</span><span className={`company-active-pill ${company.active && !company.archived ? "is-active" : ""}`}>{company.archived ? "Archived" : company.active ? "Active" : "Inactive"}</span><div className="company-card-actions">{!company.archived && <><button title="Edit company" onClick={(event) => { event.stopPropagation(); setModal(company); }}><Pencil size={15} /></button><button title={company.active ? "Deactivate company" : "Activate company"} onClick={(event) => { event.stopPropagation(); changeActive(company); }}><Power size={15} /></button></>}<button title={company.archived ? "Restore company" : "Archive company"} onClick={(event) => { event.stopPropagation(); archive(company); }}>{company.archived ? <RotateCcw size={15} /> : <Trash2 size={15} />}</button></div></div>
+        <div className="company-directory-top"><span className="company-logo-large">{company.logo ? <img src={company.logo} alt="" /> : <Building2 size={22} />}</span><span className={`company-active-pill ${company.active && !company.archived ? "is-active" : ""}`}>{company.archived ? "Archived" : company.active ? "Active" : "Inactive"}</span><div className="company-card-actions"><button title="Edit company" aria-label={`Edit ${company.name}`} onClick={(event) => { event.stopPropagation(); setModal(company); }}><Pencil size={15} /></button>{!company.archived && <><button title={company.active ? "Deactivate company" : "Activate company"} aria-label={`${company.active ? "Deactivate" : "Activate"} ${company.name}`} onClick={(event) => { event.stopPropagation(); changeActive(company); }}><Power size={15} /></button><button title="Archive company" aria-label={`Archive ${company.name}`} onClick={(event) => { event.stopPropagation(); archive(company); }}><Archive size={15} /></button></>}{company.archived && <button title="Restore company" aria-label={`Restore ${company.name}`} onClick={(event) => { event.stopPropagation(); archive(company); }}><RotateCcw size={15} /></button>}<button title="Delete company and linked data" aria-label={`Delete ${company.name} and all linked data permanently`} onClick={(event) => { event.stopPropagation(); deleteCompany(company); }}><Trash2 size={15} /></button></div></div>
         <h2>{company.name}</h2><p className="company-address">{company.address || "No address added"}</p><div className="company-contact"><span>{company.email || "No email"}</span><span>{company.phone || "No phone"}</span></div>
         <div className="company-directory-metrics"><div><small>Employees</small><b>{activeEmployees} active <span>· {employees.length} total</span></b></div><div><small>Monthly payroll</small><b>{currency(totalMonthly)}</b></div><div><small>Company joining date</small><b>{company.joiningDate || "—"}</b></div><div><small>Company leave / closure date</small><b>{company.leaveDate || "—"}</b></div></div>
         <button className="company-select-button" disabled={!company.active || company.archived} onClick={(event) => { event.stopPropagation(); setWorkPreferences({ selectedCompanyId: company.id }); toast.success(`${company.name} selected.`); }}>{company.archived ? "Restore company to switch" : company.active ? "Switch to this company" : "Activate company to switch"}</button>

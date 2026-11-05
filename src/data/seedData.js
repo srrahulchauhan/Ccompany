@@ -112,3 +112,12 @@ export const initialData = {
   company: { name: "Orbit Company", address: "72, 4th Main Road, Bengaluru, Karnataka 560034", email: "hello@orbit.co", phone: "+91 80 4567 8900", logo: "" },
   preferences: { theme: "light", notifications: true, profileName: "Alex Morgan", notificationsReadAt: "" },
 };
+
+export const createEmptyData = () => Object.fromEntries(Object.entries(initialData).map(([key, value]) => [
+  key,
+  Array.isArray(value) ? []
+    : key === "company" ? { name: "", logo: "", email: "", phone: "", address: "" }
+      : key === "preferences" ? { ...value, profileName: "Administrator", readNotificationIds: [] }
+        : key === "workPreferences" ? { ...value, selectedCompanyId: "all", selectedMonth: monthKey() }
+          : { ...value },
+]));

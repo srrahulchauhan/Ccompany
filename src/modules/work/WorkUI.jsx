@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { X } from "lucide-react";
 import { Link } from "react-router-dom";
+import AnimatedNumber from "../../components/AnimatedNumber";
 
 export const currency = (value) => `₹${Number(value || 0).toLocaleString("en-IN")}`;
 export const monthlySalaryEquivalent = (employee) => employee.salaryType === "Daily"
@@ -9,9 +10,11 @@ export const monthlySalaryEquivalent = (employee) => employee.salaryType === "Da
     ? Number(employee.hourlyRate || 0) * 8 * Number(employee.workingDays || 26)
     : Number(employee.monthlySalary || 0);
 
-export function StatCard({ label, value, note, tone = "purple", to, onClick, active = false }) {
+export function StatCard({ label, value, numberValue, formatNumber = (number) => Math.round(number).toLocaleString("en-IN"), note, tone = "purple", to, onClick, active = false }) {
   const className = `work-stat ${to || onClick ? "work-stat-clickable" : ""} ${active ? "work-stat-selected" : ""}`;
-  const content = <><span className={`work-stat-icon work-${tone}`} /><small>{label}</small><b>{value}</b>{note && <i>{note}</i>}</>;
+  const number = numberValue !== undefined ? numberValue : typeof value === "number" ? value : null;
+  const display = number === null ? value : <AnimatedNumber value={number} format={formatNumber} />;
+  const content = <><span className={`work-stat-icon work-${tone}`} /><small>{label}</small><b>{display}</b>{note && <i>{note}</i>}</>;
   if (to) return <Link className={className} to={to} aria-label={`${label}: ${value}. Open related records.`}>{content}</Link>;
   if (onClick) return <button className={className} type="button" onClick={onClick} aria-pressed={active} aria-label={`${label}: ${value}. ${active ? "Selected filter." : "Filter records."}`}>{content}</button>;
   return <div className="work-stat">{content}</div>;
@@ -41,7 +44,7 @@ export function WorkModal({ title, fields, initial = {}, onClose, onSave, submit
     if (values.monthlySalary !== undefined && Number(values.monthlySalary) < 0) { setError("Salary cannot be negative."); return; }
     const cleaned = { ...values };
     fields.forEach((field) => {
-      if (field.type === "number") cleaned[field.name] = cleaned[field.name] === "" ? 0 : Number(cleaned[field.name]);
+      if (field.type === "number" && !(field.allowEmpty && cleaned[field.name] === "")) cleaned[field.name] = cleaned[field.name] === "" ? 0 : Number(cleaned[field.name]);
       if (field.type === "checkbox") cleaned[field.name] = Boolean(cleaned[field.name]);
     });
     onSave(cleaned);

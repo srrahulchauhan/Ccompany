@@ -1,15 +1,15 @@
 import { useState } from "react";
 import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import {
-  ArrowUpRight, Bell, Boxes, BriefcaseBusiness, Building, Building2, CalendarCheck, CalendarDays, ChartNoAxesCombined,
+  ArrowUpRight, Bell, Boxes, BriefcaseBusiness, Building, CalendarCheck, CalendarDays, ChartNoAxesCombined,
   ChartPie, ChevronDown, ChevronsLeft, ChevronsRight, Circle, Handshake, LayoutDashboard, ListTodo, Menu,
-  Search, Settings2, UserRoundCog, UserRoundPlus, Users, Video, Wallet, WalletCards, X,
+  Search, Settings2, UserRoundCog, Users, Video, Wallet, WalletCards, X,
 } from "lucide-react";
 import { navigation } from "../data/modules";
 import { useStore } from "../context/StoreContext";
 
 const iconMap = {
-  LayoutDashboard, Users, UserRoundPlus, Building2, Building, CalendarCheck, Wallet, WalletCards, CalendarDays,
+  LayoutDashboard, Users, Building, CalendarCheck, Wallet, WalletCards, CalendarDays,
   BriefcaseBusiness, ListTodo, Handshake, ChartNoAxesCombined, Boxes, Video, ChartPie, Bell, Settings2, UserRoundCog,
 };
 
@@ -39,7 +39,7 @@ export default function Layout() {
       </div>
       <div className="nav-section-title">{(!collapsed || mobile) && "MULTI-COMPANY WORK"}</div>
       <nav className="sidebar-nav">
-        {navigation.slice(0, 7).map((item) => {
+        {navigation.slice(0, 6).map((item) => {
           const Icon = iconMap[item.icon] || Circle;
           return <NavLink key={item.path} to={item.path} end={item.path === "/"} onClick={() => setMobileOpen(false)} title={collapsed && !mobile ? item.label : ""} className={({ isActive }) => `nav-link ${isActive ? "nav-link-active" : ""}`}>
             <Icon size={18} strokeWidth={1.8} /><span>{item.label}</span>
@@ -48,7 +48,7 @@ export default function Layout() {
       </nav>
       <div className="nav-section-title nav-secondary">{(!collapsed || mobile) && "COMPANY OPERATIONS"}</div>
       <nav className="sidebar-nav">
-        {navigation.slice(7, 13).map((item) => {
+        {navigation.slice(6, 10).map((item) => {
           const Icon = iconMap[item.icon] || Circle;
           return <NavLink key={item.path} to={item.path} onClick={() => setMobileOpen(false)} title={collapsed && !mobile ? item.label : ""} className={({ isActive }) => `nav-link ${isActive ? "nav-link-active" : ""}`}>
             <Icon size={18} strokeWidth={1.8} /><span>{item.label}</span>
@@ -57,13 +57,19 @@ export default function Layout() {
       </nav>
       <div className="nav-section-title nav-secondary">{(!collapsed || mobile) && "PROJECTS & ADMIN"}</div>
       <nav className="sidebar-nav">
-        {navigation.slice(13).map((item) => {
+        {navigation.slice(10).map((item) => {
           const Icon = iconMap[item.icon] || Circle;
           return <NavLink key={item.path} to={item.path} onClick={() => setMobileOpen(false)} title={collapsed && !mobile ? item.label : ""} className={({ isActive }) => `nav-link ${isActive ? "nav-link-active" : ""}`}>
             <Icon size={18} strokeWidth={1.8} /><span>{item.label}</span>
             {item.label === "Notifications" && alerts.length > 0 && <span className="nav-badge">{alerts.length}</span>}
           </NavLink>;
         })}
+      </nav>
+      <div className="nav-section-title nav-secondary">{(!collapsed || mobile) && "PERSONAL FINANCE"}</div>
+      <nav className="sidebar-nav">
+        <NavLink to="/personal" onClick={() => setMobileOpen(false)} title={collapsed && !mobile ? "Personal Accounts" : ""} className={({ isActive }) => `nav-link ${isActive ? "nav-link-active" : ""}`}>
+          <ChartNoAxesCombined size={18} strokeWidth={1.8} /><span>Personal Accounts</span>
+        </NavLink>
       </nav>
       <div className="sidebar-bottom">
         {(!collapsed || mobile) && <div className="help-card"><div className="help-icon">✦</div><b>Need a hand?</b><p>Our team is here to help you get more from Orbit.</p><button onClick={() => window.open("mailto:support@orbit.co")}>Contact support <ArrowUpRight size={14} /></button></div>}

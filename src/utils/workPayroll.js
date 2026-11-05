@@ -41,7 +41,10 @@ export const calculateWorkSalary = (data, employment, month = monthKey()) => {
     : employment.salaryType === "Hourly"
       ? Number(employment.hourlyRate || 0)
       : Number(employment.monthlySalary || 0) / days / 8;
-  const overtimeAmount = Math.round(overtimeHours * overtimeRate * Number(data.workPreferences?.overtimeMultiplier || 1.5));
+  const customOvertimeRate = company?.overtimeRate !== "" && company?.overtimeRate != null && Number.isFinite(Number(company.overtimeRate))
+    ? Number(company.overtimeRate)
+    : null;
+  const overtimeAmount = Math.round(overtimeHours * (customOvertimeRate ?? overtimeRate * Number(data.workPreferences?.overtimeMultiplier || 1.5)));
   const baseRate = employment.salaryType === "Daily"
     ? Number(employment.dailySalary || 0)
     : employment.salaryType === "Hourly"

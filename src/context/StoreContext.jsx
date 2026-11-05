@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { initialData } from "../data/seedData";
+import { createEmptyData } from "../data/seedData";
 import { dateKey } from "../utils/date";
 import { calculateWorkSalary } from "../utils/workPayroll";
 
@@ -10,18 +10,19 @@ const makeId = (prefix) => `${prefix}-${Date.now().toString(36)}-${Math.random()
 const loadData = () => {
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
-    if (!saved) return initialData;
+    const emptyData = createEmptyData();
+    if (!saved) return emptyData;
     const parsed = JSON.parse(saved);
     return {
-      ...initialData,
+      ...emptyData,
       ...parsed,
-      company: { ...initialData.company, ...parsed.company },
-      preferences: { ...initialData.preferences, ...parsed.preferences },
-      workPreferences: { ...initialData.workPreferences, ...parsed.workPreferences },
+      company: { ...emptyData.company, ...parsed.company },
+      preferences: { ...emptyData.preferences, ...parsed.preferences },
+      workPreferences: { ...emptyData.workPreferences, ...parsed.workPreferences },
     };
   } catch (error) {
     console.error("Could not load saved company data.", error);
-    return initialData;
+    return createEmptyData();
   }
 };
 
@@ -171,14 +172,51 @@ export function StoreProvider({ children }) {
       }));
     },
     setWorkPreferences: (preferences) => setData((previous) => ({ ...previous, workPreferences: { ...previous.workPreferences, ...preferences } })),
+    deleteWorkCompany: (companyId) => {
+      const employmentIds = new Set(data.workEmployees
+        .filter((employment) => employment.companyId === companyId)
+        .map((employment) => employment.id));
+      const deletedCounts = {
+        employments: employmentIds.size,
+        attendance: data.workAttendance.filter((record) => record.companyId === companyId || employmentIds.has(record.employmentId)).length,
+        salaryTransactions: data.workSalaryTransactions.filter((record) => record.companyId === companyId || employmentIds.has(record.employmentId)).length,
+      };
+      setData((previous) => ({
+        ...previous,
+        workCompanies: previous.workCompanies.filter((company) => company.id !== companyId),
+        workEmployees: previous.workEmployees.filter((employment) => employment.companyId !== companyId),
+        workAttendance: previous.workAttendance.filter((record) => record.companyId !== companyId && !employmentIds.has(record.employmentId)),
+        workSalaryTransactions: previous.workSalaryTransactions.filter((record) => record.companyId !== companyId && !employmentIds.has(record.employmentId)),
+        workPreferences: previous.workPreferences.selectedCompanyId === companyId
+          ? { ...previous.workPreferences, selectedCompanyId: "all" }
+          : previous.workPreferences,
+      }));
+      return deletedCounts;
+    },
     toggleEmploymentLock: (employmentId) => setData((previous) => ({
       ...previous,
       workEmployees: previous.workEmployees.map((item) => item.id === employmentId ? { ...item, historyUnlocked: !item.historyUnlocked } : item),
     })),
     updateCompany: (company) => setData((previous) => ({ ...previous, company: { ...previous.company, ...company } })),
     updatePreferences: (preferences) => setData((previous) => ({ ...previous, preferences: { ...previous.preferences, ...preferences } })),
-    reset: () => setData(initialData),
-    replaceAll: (replacement) => setData({ ...initialData, ...replacement, company: { ...initialData.company, ...replacement.company }, preferences: { ...initialData.preferences, ...replacement.preferences } }),
+    reset: () => {
+      localStorage.removeItem(STORAGE_KEY);
+      setData(createEmptyData());
+    },
+    cleanAll: () => {
+      localStorage.removeItem(STORAGE_KEY);
+      setData(createEmptyData());
+    },
+    replaceAll: (replacement) => {
+      const emptyData = createEmptyData();
+      setData({
+        ...emptyData,
+        ...replacement,
+        company: { ...emptyData.company, ...replacement.company },
+        preferences: { ...emptyData.preferences, ...replacement.preferences },
+        workPreferences: { ...emptyData.workPreferences, ...replacement.workPreferences },
+      });
+    },
   }), [data]);
 
   const value = useMemo(() => ({ data, ...actions }), [data, actions]);

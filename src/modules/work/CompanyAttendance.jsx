@@ -57,6 +57,7 @@ export default function CompanyAttendance() {
     const employment = data.workEmployees.find((employee) => employee.id === values.employmentId);
     if (!employment) { toast.error("Choose a valid employee employment."); return; }
     if (values.date < employment.joiningDate || (employment.endDate && values.date > employment.endDate)) { toast.error("Attendance date must fall within the employment period."); return; }
+    if (values.status === "Overtime" && Number(values.overtimeHours) <= 0) { toast.error("Enter overtime hours when attendance status is Overtime."); return; }
     try {
       if (modal?.id) { update("workAttendance", modal.id, { ...values, companyId: employment.companyId }); toast.success("Attendance updated."); }
       else { add("workAttendance", { ...values, companyId: employment.companyId }); toast.success("Attendance marked."); }
