@@ -26,6 +26,7 @@ const Reports = lazy(() => import("./pages/Reports"));
 const Settings = lazy(() => import("./pages/Settings"));
 const Notifications = lazy(() => import("./pages/Notifications"));
 const PersonalApp = lazy(() => import("./personal/PersonalApp"));
+const JobTracker = lazy(() => import("./job-tracker/JobTracker"));
 
 export default function App() {
   return <>
@@ -41,6 +42,7 @@ export default function App() {
         <Route path="company-attendance" element={<CompanyAttendance />} />
         <Route path="company-salary" element={<CompanySalary />} />
         <Route path="work-reports" element={<WorkReports />} />
+        <Route path="job-tracker" element={<Suspense fallback={<div className="page-loading">Loading your job tracker…</div>}><JobTracker /></Suspense>} />
         <Route path="employees" element={<Employees />} />
         <Route path="hr" element={<HrManagement />} />
         <Route path="departments" element={<Departments />} />

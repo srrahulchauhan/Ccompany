@@ -5,6 +5,7 @@ export const navigation = [
   { label: "Company attendance", path: "/company-attendance", icon: "CalendarDays" },
   { label: "Company salary", path: "/company-salary", icon: "WalletCards" },
   { label: "Work reports", path: "/work-reports", icon: "ChartNoAxesCombined" },
+  { label: "Job tracker", path: "/job-tracker", icon: "BriefcaseBusiness" },
   { label: "Employees", path: "/employees", icon: "Users" },
   { label: "Attendance", path: "/attendance", icon: "CalendarCheck" },
   { label: "Salary & Payroll", path: "/payroll", icon: "Wallet" },

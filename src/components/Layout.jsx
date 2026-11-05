@@ -48,7 +48,7 @@ export default function Layout() {
       </nav>
       <div className="nav-section-title nav-secondary">{(!collapsed || mobile) && "COMPANY OPERATIONS"}</div>
       <nav className="sidebar-nav">
-        {navigation.slice(6, 10).map((item) => {
+        {navigation.slice(6, 11).map((item) => {
           const Icon = iconMap[item.icon] || Circle;
           return <NavLink key={item.path} to={item.path} onClick={() => setMobileOpen(false)} title={collapsed && !mobile ? item.label : ""} className={({ isActive }) => `nav-link ${isActive ? "nav-link-active" : ""}`}>
             <Icon size={18} strokeWidth={1.8} /><span>{item.label}</span>
@@ -57,7 +57,7 @@ export default function Layout() {
       </nav>
       <div className="nav-section-title nav-secondary">{(!collapsed || mobile) && "PROJECTS & ADMIN"}</div>
       <nav className="sidebar-nav">
-        {navigation.slice(10).map((item) => {
+        {navigation.slice(11).map((item) => {
           const Icon = iconMap[item.icon] || Circle;
           return <NavLink key={item.path} to={item.path} onClick={() => setMobileOpen(false)} title={collapsed && !mobile ? item.label : ""} className={({ isActive }) => `nav-link ${isActive ? "nav-link-active" : ""}`}>
             <Icon size={18} strokeWidth={1.8} /><span>{item.label}</span>
