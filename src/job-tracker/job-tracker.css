@@ -14,7 +14,7 @@
 .jt-button-danger { border-color: #f1d1d0; background: #fff7f6; color: #c6534c; }
 .jt-button.is-active { color: #5549c7; background: #f1f0ff; }
 .jt-small { min-height: 29px; padding: 0 9px; font-size: 10px; }
-.jt-tabs { display: flex; gap: 4px; overflow-x: auto; margin: 0 0 17px; padding: 5px; border: 1px solid #e9ebf2; border-radius: 10px; background: #fff; scrollbar-width: thin; }
+.jt-tabs { display: flex; gap: 4px; overflow-x: auto; margin: 0 0 17px; padding: 5px; border: 1px solid #e9ebf2; border-radius: 10px; background: #fff; }
 .jt-tabs button { flex: 0 0 auto; display: inline-flex; align-items: center; gap: 7px; min-height: 34px; padding: 0 11px; border: 0; border-radius: 7px; background: transparent; color: #7e8798; font-size: 10px; font-weight: 600; }
 .jt-tabs button:hover { background: #f7f7fc; color: #5147c1; }
 .jt-tabs button.is-active { background: #f0efff; color: #5348c3; font-weight: 700; }
@@ -142,7 +142,7 @@
 .jt-backup-icon { width: 35px; height: 35px; display: grid; place-items: center; border-radius: 9px; background: #f0efff; color: #6055cc; }
 .jt-backup-blue { background: #edf5ff; color: #438dd8; }.jt-backup-red { background: #fff0ef; color: #d65b57; }
 .jt-backup-danger { border-color: #f1dddd !important; }
-.jt-modal-backdrop { position: fixed; z-index: 70; inset: 0; display: grid; place-items: center; padding: 20px; background: #171c3285; backdrop-filter: blur(3px); }
+.jt-modal-backdrop { position: fixed; z-index: 70; inset: 0; display: grid; place-items: center; padding: 20px; background: #171c3285; -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px); }
 .jt-modal { width: min(820px, 100%); max-height: min(90vh, 900px); overflow: auto; border: 1px solid #eceef4; border-radius: 13px; background: #fff; box-shadow: 0 25px 70px #171c3235; }
 .jt-modal-head { position: sticky; z-index: 2; top: 0; display: flex; align-items: center; justify-content: space-between; padding: 17px 20px; border-bottom: 1px solid #eceef3; background: #fff; }
 .jt-modal-head h2 { margin: 0; color: #262e48; font: 750 16px "Manrope", sans-serif; text-transform: capitalize; }
@@ -154,7 +154,7 @@
 .jt-field input, .jt-field select, .jt-field textarea { width: 100%; min-height: 36px; padding: 8px 9px; border: 1px solid #e5e8ef; border-radius: 6px; outline: none; background: #fff; color: #414a60; font-size: 10px; }
 .jt-field input:focus, .jt-field select:focus, .jt-field textarea:focus { border-color: #aaa4ec; box-shadow: 0 0 0 3px #6558d311; }
 .jt-field textarea { resize: vertical; }.jt-field-wide { grid-column: 1 / -1; }
-.jt-check-field { display: flex; align-items: center; gap: 8px; min-height: 35px; }.jt-check-field input { width: 15px; min-height: auto; height: 15px; accent-color: #5b50cd; }
+.jt-check-field { display: flex; align-items: center; gap: 8px; min-height: 35px; }.jt-check-field input { width: 15px; min-height: 0; height: 15px; accent-color: #5b50cd; }
 .jt-form-error { margin: 13px 0 0; color: #c8514c; font-size: 10px; }
 .jt-modal-actions { justify-content: flex-end; margin-top: 18px; padding-top: 13px; border-top: 1px solid #edf0f4; }
 @media (max-width: 1100px) {

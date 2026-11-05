@@ -65,12 +65,6 @@ export default function Layout() {
           </NavLink>;
         })}
       </nav>
-      <div className="nav-section-title nav-secondary">{(!collapsed || mobile) && "PERSONAL FINANCE"}</div>
-      <nav className="sidebar-nav">
-        <NavLink to="/personal" onClick={() => setMobileOpen(false)} title={collapsed && !mobile ? "Personal Accounts" : ""} className={({ isActive }) => `nav-link ${isActive ? "nav-link-active" : ""}`}>
-          <ChartNoAxesCombined size={18} strokeWidth={1.8} /><span>Personal Accounts</span>
-        </NavLink>
-      </nav>
       <div className="sidebar-bottom">
         {(!collapsed || mobile) && <div className="help-card"><div className="help-icon">✦</div><b>Need a hand?</b><p>Our team is here to help you get more from Orbit.</p><button onClick={() => window.open("mailto:support@orbit.co")}>Contact support <ArrowUpRight size={14} /></button></div>}
         <button className="collapse-btn" onClick={() => setCollapsed((value) => !value)}>{collapsed ? <ChevronsRight size={17} /> : <><ChevronsLeft size={17} /><span>Collapse menu</span></>}</button>
